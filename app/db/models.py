@@ -19,6 +19,7 @@ from sqlalchemy import (
     and_,
     func,
     select,
+    case,
     Text,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -38,6 +39,8 @@ from app.models.user import (
     UserStatus,
     UserExpireStrategy,
 )
+
+from app.models.admin_transaction import(AdminTransactionType)
 
 admins_services = Table(
     "admins_services",
@@ -74,6 +77,20 @@ class Admin(Base):
         back_populates="admins",
         lazy="joined",
     )
+    transactions_owner = relationship(
+        "AdminTransaction",
+        foreign_keys="AdminTransaction.admin_id",  # مشخص کردن ستون کلید خارجی
+        back_populates="owner",  # رابطه معکوس
+        lazy="joined",
+    )
+    
+    transactions_creator = relationship(
+        "AdminTransaction",
+        foreign_keys="AdminTransaction.creator_admin_id",  # مشخص کردن ستون کلید خارجی
+        back_populates="creator",  # رابطه معکوس
+        lazy="joined",
+    )
+    
     enabled = Column(
         Boolean,
         nullable=False,
@@ -101,10 +118,19 @@ class Admin(Base):
         default="",
         server_default=sqlalchemy.sql.text(""),
     )
-
     @property
     def service_ids(self):
         return [service.id for service in self.services]
+
+    @property
+    def balance(self):
+        total = 0
+        for t in self.transactions_owner:
+            if t.type == AdminTransactionType.DEPOSIT:
+                total  = total + t.amount_gigabytes
+            else:
+                total  = total - t.amount_gigabytes
+        return total
 
     @classmethod
     def __declare_last__(cls):
@@ -115,6 +141,42 @@ class Admin(Base):
             .scalar_subquery()
         )
 
+
+# Tables added by Ehsan
+# Tables added by Ehsan
+# Tables added by Ehsan
+
+class AdminTransaction(Base):
+    __tablename__ = "admin_transactions"
+
+    id = Column(Integer, unique=True, primary_key=True)
+    admin_id = Column(Integer, ForeignKey('admins.id'))
+    creator_admin_id = Column(Integer, ForeignKey("admins.id"), nullable=False, default = False)
+    type = Column(
+        Enum(AdminTransactionType),
+        nullable=False
+    )
+    amount_gigabytes = Column(Integer, nullable=False)
+    amount_rials = Column(Integer, nullable=False)
+    date_created = Column(DateTime, default=datetime.utcnow)
+    note = Column(
+        String(256),
+        nullable=False
+    )
+    owner = relationship(
+        "Admin",
+        foreign_keys=[admin_id],
+        back_populates="transactions_owner",
+    )
+    creator = relationship(
+        "Admin",
+        foreign_keys=[creator_admin_id],
+        back_populates="transactions_creator",
+    )
+    
+# Tables added by Ehsan
+# Tables added by Ehsan
+# Tables added by Ehsan
 
 class Service(Base):
     __tablename__ = "services"

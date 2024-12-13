@@ -18,6 +18,8 @@ import { Route as AuthImport } from './routes/_auth'
 import { Route as AuthLoginImport } from './routes/_auth/login'
 import { Route as DashboardUsersCreateImport } from './routes/_dashboard/users/create'
 import { Route as DashboardUsersUserIdImport } from './routes/_dashboard/users/$userId'
+import { Route as DashboardTransactionsCreateImport } from './routes/_dashboard/transactions/create'
+import { Route as DashboardTransactionsAdminIdImport } from './routes/_dashboard/transactions/$adminId'
 import { Route as DashboardServicesCreateImport } from './routes/_dashboard/services/create'
 import { Route as DashboardServicesServiceIdImport } from './routes/_dashboard/services/$serviceId'
 import { Route as DashboardNodesCreateImport } from './routes/_dashboard/nodes/create'
@@ -26,12 +28,15 @@ import { Route as DashboardHostsHostIdImport } from './routes/_dashboard/hosts/$
 import { Route as DashboardAdminsCreateImport } from './routes/_dashboard/admins/create'
 import { Route as DashboardAdminsAdminIdImport } from './routes/_dashboard/admins/$adminId'
 import { Route as DashboardUsersUserIdIndexImport } from './routes/_dashboard/users/$userId/index'
+import { Route as DashboardTransactionsAdminIdIndexImport } from './routes/_dashboard/transactions/$adminId/index'
 import { Route as DashboardServicesServiceIdIndexImport } from './routes/_dashboard/services/$serviceId/index'
 import { Route as DashboardNodesNodeIdIndexImport } from './routes/_dashboard/nodes/$nodeId/index'
 import { Route as DashboardHostsHostIdIndexImport } from './routes/_dashboard/hosts/$hostId/index'
 import { Route as DashboardAdminsAdminIdIndexImport } from './routes/_dashboard/admins/$adminId/index'
 import { Route as DashboardUsersUserIdEditImport } from './routes/_dashboard/users/$userId/edit'
 import { Route as DashboardUsersUserIdDeleteImport } from './routes/_dashboard/users/$userId/delete'
+import { Route as DashboardTransactionsAdminIdEditImport } from './routes/_dashboard/transactions/$adminId/edit'
+import { Route as DashboardTransactionsAdminIdDeleteImport } from './routes/_dashboard/transactions/$adminId/delete'
 import { Route as DashboardServicesServiceIdEditImport } from './routes/_dashboard/services/$serviceId/edit'
 import { Route as DashboardServicesServiceIdDeleteImport } from './routes/_dashboard/services/$serviceId/delete'
 import { Route as DashboardNodesNodeIdEditImport } from './routes/_dashboard/nodes/$nodeId/edit'
@@ -46,6 +51,9 @@ import { Route as DashboardAdminsAdminIdDeleteImport } from './routes/_dashboard
 
 const DashboardIndexLazyImport = createFileRoute('/_dashboard/')()
 const DashboardUsersLazyImport = createFileRoute('/_dashboard/users')()
+const DashboardTransactionsLazyImport = createFileRoute(
+  '/_dashboard/transactions',
+)()
 const DashboardSettingsLazyImport = createFileRoute('/_dashboard/settings')()
 const DashboardServicesLazyImport = createFileRoute('/_dashboard/services')()
 const DashboardNodesLazyImport = createFileRoute('/_dashboard/nodes')()
@@ -78,6 +86,14 @@ const DashboardUsersLazyRoute = DashboardUsersLazyImport.update({
   getParentRoute: () => DashboardRoute,
 } as any).lazy(() =>
   import('./routes/_dashboard/users.lazy').then((d) => d.Route),
+)
+
+const DashboardTransactionsLazyRoute = DashboardTransactionsLazyImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => DashboardRoute,
+} as any).lazy(() =>
+  import('./routes/_dashboard/transactions.lazy').then((d) => d.Route),
 )
 
 const DashboardSettingsLazyRoute = DashboardSettingsLazyImport.update({
@@ -138,6 +154,20 @@ const DashboardUsersUserIdRoute = DashboardUsersUserIdImport.update({
   getParentRoute: () => DashboardUsersLazyRoute,
 } as any)
 
+const DashboardTransactionsCreateRoute =
+  DashboardTransactionsCreateImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => DashboardTransactionsLazyRoute,
+  } as any)
+
+const DashboardTransactionsAdminIdRoute =
+  DashboardTransactionsAdminIdImport.update({
+    id: '/$adminId',
+    path: '/$adminId',
+    getParentRoute: () => DashboardTransactionsLazyRoute,
+  } as any)
+
 const DashboardServicesCreateRoute = DashboardServicesCreateImport.update({
   id: '/create',
   path: '/create',
@@ -188,6 +218,13 @@ const DashboardUsersUserIdIndexRoute = DashboardUsersUserIdIndexImport.update({
   getParentRoute: () => DashboardUsersUserIdRoute,
 } as any)
 
+const DashboardTransactionsAdminIdIndexRoute =
+  DashboardTransactionsAdminIdIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardTransactionsAdminIdRoute,
+  } as any)
+
 const DashboardServicesServiceIdIndexRoute =
   DashboardServicesServiceIdIndexImport.update({
     id: '/',
@@ -227,6 +264,20 @@ const DashboardUsersUserIdDeleteRoute = DashboardUsersUserIdDeleteImport.update(
     getParentRoute: () => DashboardUsersUserIdRoute,
   } as any,
 )
+
+const DashboardTransactionsAdminIdEditRoute =
+  DashboardTransactionsAdminIdEditImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => DashboardTransactionsAdminIdRoute,
+  } as any)
+
+const DashboardTransactionsAdminIdDeleteRoute =
+  DashboardTransactionsAdminIdDeleteImport.update({
+    id: '/delete',
+    path: '/delete',
+    getParentRoute: () => DashboardTransactionsAdminIdRoute,
+  } as any)
 
 const DashboardServicesServiceIdEditRoute =
   DashboardServicesServiceIdEditImport.update({
@@ -352,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsLazyImport
       parentRoute: typeof DashboardImport
     }
+    '/_dashboard/transactions': {
+      id: '/_dashboard/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof DashboardTransactionsLazyImport
+      parentRoute: typeof DashboardImport
+    }
     '/_dashboard/users': {
       id: '/_dashboard/users'
       path: '/users'
@@ -414,6 +472,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/create'
       preLoaderRoute: typeof DashboardServicesCreateImport
       parentRoute: typeof DashboardServicesLazyImport
+    }
+    '/_dashboard/transactions/$adminId': {
+      id: '/_dashboard/transactions/$adminId'
+      path: '/$adminId'
+      fullPath: '/transactions/$adminId'
+      preLoaderRoute: typeof DashboardTransactionsAdminIdImport
+      parentRoute: typeof DashboardTransactionsLazyImport
+    }
+    '/_dashboard/transactions/create': {
+      id: '/_dashboard/transactions/create'
+      path: '/create'
+      fullPath: '/transactions/create'
+      preLoaderRoute: typeof DashboardTransactionsCreateImport
+      parentRoute: typeof DashboardTransactionsLazyImport
     }
     '/_dashboard/users/$userId': {
       id: '/_dashboard/users/$userId'
@@ -492,6 +564,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardServicesServiceIdEditImport
       parentRoute: typeof DashboardServicesServiceIdImport
     }
+    '/_dashboard/transactions/$adminId/delete': {
+      id: '/_dashboard/transactions/$adminId/delete'
+      path: '/delete'
+      fullPath: '/transactions/$adminId/delete'
+      preLoaderRoute: typeof DashboardTransactionsAdminIdDeleteImport
+      parentRoute: typeof DashboardTransactionsAdminIdImport
+    }
+    '/_dashboard/transactions/$adminId/edit': {
+      id: '/_dashboard/transactions/$adminId/edit'
+      path: '/edit'
+      fullPath: '/transactions/$adminId/edit'
+      preLoaderRoute: typeof DashboardTransactionsAdminIdEditImport
+      parentRoute: typeof DashboardTransactionsAdminIdImport
+    }
     '/_dashboard/users/$userId/delete': {
       id: '/_dashboard/users/$userId/delete'
       path: '/delete'
@@ -533,6 +619,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/$serviceId/'
       preLoaderRoute: typeof DashboardServicesServiceIdIndexImport
       parentRoute: typeof DashboardServicesServiceIdImport
+    }
+    '/_dashboard/transactions/$adminId/': {
+      id: '/_dashboard/transactions/$adminId/'
+      path: '/'
+      fullPath: '/transactions/$adminId/'
+      preLoaderRoute: typeof DashboardTransactionsAdminIdIndexImport
+      parentRoute: typeof DashboardTransactionsAdminIdImport
     }
     '/_dashboard/users/$userId/': {
       id: '/_dashboard/users/$userId/'
@@ -677,6 +770,44 @@ const DashboardServicesLazyRouteWithChildren =
     DashboardServicesLazyRouteChildren,
   )
 
+interface DashboardTransactionsAdminIdRouteChildren {
+  DashboardTransactionsAdminIdDeleteRoute: typeof DashboardTransactionsAdminIdDeleteRoute
+  DashboardTransactionsAdminIdEditRoute: typeof DashboardTransactionsAdminIdEditRoute
+  DashboardTransactionsAdminIdIndexRoute: typeof DashboardTransactionsAdminIdIndexRoute
+}
+
+const DashboardTransactionsAdminIdRouteChildren: DashboardTransactionsAdminIdRouteChildren =
+  {
+    DashboardTransactionsAdminIdDeleteRoute:
+      DashboardTransactionsAdminIdDeleteRoute,
+    DashboardTransactionsAdminIdEditRoute:
+      DashboardTransactionsAdminIdEditRoute,
+    DashboardTransactionsAdminIdIndexRoute:
+      DashboardTransactionsAdminIdIndexRoute,
+  }
+
+const DashboardTransactionsAdminIdRouteWithChildren =
+  DashboardTransactionsAdminIdRoute._addFileChildren(
+    DashboardTransactionsAdminIdRouteChildren,
+  )
+
+interface DashboardTransactionsLazyRouteChildren {
+  DashboardTransactionsAdminIdRoute: typeof DashboardTransactionsAdminIdRouteWithChildren
+  DashboardTransactionsCreateRoute: typeof DashboardTransactionsCreateRoute
+}
+
+const DashboardTransactionsLazyRouteChildren: DashboardTransactionsLazyRouteChildren =
+  {
+    DashboardTransactionsAdminIdRoute:
+      DashboardTransactionsAdminIdRouteWithChildren,
+    DashboardTransactionsCreateRoute: DashboardTransactionsCreateRoute,
+  }
+
+const DashboardTransactionsLazyRouteWithChildren =
+  DashboardTransactionsLazyRoute._addFileChildren(
+    DashboardTransactionsLazyRouteChildren,
+  )
+
 interface DashboardUsersUserIdRouteChildren {
   DashboardUsersUserIdDeleteRoute: typeof DashboardUsersUserIdDeleteRoute
   DashboardUsersUserIdEditRoute: typeof DashboardUsersUserIdEditRoute
@@ -711,6 +842,7 @@ interface DashboardRouteChildren {
   DashboardNodesLazyRoute: typeof DashboardNodesLazyRouteWithChildren
   DashboardServicesLazyRoute: typeof DashboardServicesLazyRouteWithChildren
   DashboardSettingsLazyRoute: typeof DashboardSettingsLazyRoute
+  DashboardTransactionsLazyRoute: typeof DashboardTransactionsLazyRouteWithChildren
   DashboardUsersLazyRoute: typeof DashboardUsersLazyRouteWithChildren
   DashboardIndexLazyRoute: typeof DashboardIndexLazyRoute
 }
@@ -721,6 +853,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardNodesLazyRoute: DashboardNodesLazyRouteWithChildren,
   DashboardServicesLazyRoute: DashboardServicesLazyRouteWithChildren,
   DashboardSettingsLazyRoute: DashboardSettingsLazyRoute,
+  DashboardTransactionsLazyRoute: DashboardTransactionsLazyRouteWithChildren,
   DashboardUsersLazyRoute: DashboardUsersLazyRouteWithChildren,
   DashboardIndexLazyRoute: DashboardIndexLazyRoute,
 }
@@ -737,6 +870,7 @@ export interface FileRoutesByFullPath {
   '/nodes': typeof DashboardNodesLazyRouteWithChildren
   '/services': typeof DashboardServicesLazyRouteWithChildren
   '/settings': typeof DashboardSettingsLazyRoute
+  '/transactions': typeof DashboardTransactionsLazyRouteWithChildren
   '/users': typeof DashboardUsersLazyRouteWithChildren
   '/': typeof DashboardIndexLazyRoute
   '/admins/$adminId': typeof DashboardAdminsAdminIdRouteWithChildren
@@ -746,6 +880,8 @@ export interface FileRoutesByFullPath {
   '/nodes/create': typeof DashboardNodesCreateRoute
   '/services/$serviceId': typeof DashboardServicesServiceIdRouteWithChildren
   '/services/create': typeof DashboardServicesCreateRoute
+  '/transactions/$adminId': typeof DashboardTransactionsAdminIdRouteWithChildren
+  '/transactions/create': typeof DashboardTransactionsCreateRoute
   '/users/$userId': typeof DashboardUsersUserIdRouteWithChildren
   '/users/create': typeof DashboardUsersCreateRoute
   '/admins/$adminId/delete': typeof DashboardAdminsAdminIdDeleteRoute
@@ -757,12 +893,15 @@ export interface FileRoutesByFullPath {
   '/nodes/$nodeId/edit': typeof DashboardNodesNodeIdEditRoute
   '/services/$serviceId/delete': typeof DashboardServicesServiceIdDeleteRoute
   '/services/$serviceId/edit': typeof DashboardServicesServiceIdEditRoute
+  '/transactions/$adminId/delete': typeof DashboardTransactionsAdminIdDeleteRoute
+  '/transactions/$adminId/edit': typeof DashboardTransactionsAdminIdEditRoute
   '/users/$userId/delete': typeof DashboardUsersUserIdDeleteRoute
   '/users/$userId/edit': typeof DashboardUsersUserIdEditRoute
   '/admins/$adminId/': typeof DashboardAdminsAdminIdIndexRoute
   '/hosts/$hostId/': typeof DashboardHostsHostIdIndexRoute
   '/nodes/$nodeId/': typeof DashboardNodesNodeIdIndexRoute
   '/services/$serviceId/': typeof DashboardServicesServiceIdIndexRoute
+  '/transactions/$adminId/': typeof DashboardTransactionsAdminIdIndexRoute
   '/users/$userId/': typeof DashboardUsersUserIdIndexRoute
 }
 
@@ -774,11 +913,13 @@ export interface FileRoutesByTo {
   '/nodes': typeof DashboardNodesLazyRouteWithChildren
   '/services': typeof DashboardServicesLazyRouteWithChildren
   '/settings': typeof DashboardSettingsLazyRoute
+  '/transactions': typeof DashboardTransactionsLazyRouteWithChildren
   '/users': typeof DashboardUsersLazyRouteWithChildren
   '/': typeof DashboardIndexLazyRoute
   '/admins/create': typeof DashboardAdminsCreateRoute
   '/nodes/create': typeof DashboardNodesCreateRoute
   '/services/create': typeof DashboardServicesCreateRoute
+  '/transactions/create': typeof DashboardTransactionsCreateRoute
   '/users/create': typeof DashboardUsersCreateRoute
   '/admins/$adminId/delete': typeof DashboardAdminsAdminIdDeleteRoute
   '/admins/$adminId/edit': typeof DashboardAdminsAdminIdEditRoute
@@ -789,12 +930,15 @@ export interface FileRoutesByTo {
   '/nodes/$nodeId/edit': typeof DashboardNodesNodeIdEditRoute
   '/services/$serviceId/delete': typeof DashboardServicesServiceIdDeleteRoute
   '/services/$serviceId/edit': typeof DashboardServicesServiceIdEditRoute
+  '/transactions/$adminId/delete': typeof DashboardTransactionsAdminIdDeleteRoute
+  '/transactions/$adminId/edit': typeof DashboardTransactionsAdminIdEditRoute
   '/users/$userId/delete': typeof DashboardUsersUserIdDeleteRoute
   '/users/$userId/edit': typeof DashboardUsersUserIdEditRoute
   '/admins/$adminId': typeof DashboardAdminsAdminIdIndexRoute
   '/hosts/$hostId': typeof DashboardHostsHostIdIndexRoute
   '/nodes/$nodeId': typeof DashboardNodesNodeIdIndexRoute
   '/services/$serviceId': typeof DashboardServicesServiceIdIndexRoute
+  '/transactions/$adminId': typeof DashboardTransactionsAdminIdIndexRoute
   '/users/$userId': typeof DashboardUsersUserIdIndexRoute
 }
 
@@ -808,6 +952,7 @@ export interface FileRoutesById {
   '/_dashboard/nodes': typeof DashboardNodesLazyRouteWithChildren
   '/_dashboard/services': typeof DashboardServicesLazyRouteWithChildren
   '/_dashboard/settings': typeof DashboardSettingsLazyRoute
+  '/_dashboard/transactions': typeof DashboardTransactionsLazyRouteWithChildren
   '/_dashboard/users': typeof DashboardUsersLazyRouteWithChildren
   '/_dashboard/': typeof DashboardIndexLazyRoute
   '/_dashboard/admins/$adminId': typeof DashboardAdminsAdminIdRouteWithChildren
@@ -817,6 +962,8 @@ export interface FileRoutesById {
   '/_dashboard/nodes/create': typeof DashboardNodesCreateRoute
   '/_dashboard/services/$serviceId': typeof DashboardServicesServiceIdRouteWithChildren
   '/_dashboard/services/create': typeof DashboardServicesCreateRoute
+  '/_dashboard/transactions/$adminId': typeof DashboardTransactionsAdminIdRouteWithChildren
+  '/_dashboard/transactions/create': typeof DashboardTransactionsCreateRoute
   '/_dashboard/users/$userId': typeof DashboardUsersUserIdRouteWithChildren
   '/_dashboard/users/create': typeof DashboardUsersCreateRoute
   '/_dashboard/admins/$adminId/delete': typeof DashboardAdminsAdminIdDeleteRoute
@@ -828,12 +975,15 @@ export interface FileRoutesById {
   '/_dashboard/nodes/$nodeId/edit': typeof DashboardNodesNodeIdEditRoute
   '/_dashboard/services/$serviceId/delete': typeof DashboardServicesServiceIdDeleteRoute
   '/_dashboard/services/$serviceId/edit': typeof DashboardServicesServiceIdEditRoute
+  '/_dashboard/transactions/$adminId/delete': typeof DashboardTransactionsAdminIdDeleteRoute
+  '/_dashboard/transactions/$adminId/edit': typeof DashboardTransactionsAdminIdEditRoute
   '/_dashboard/users/$userId/delete': typeof DashboardUsersUserIdDeleteRoute
   '/_dashboard/users/$userId/edit': typeof DashboardUsersUserIdEditRoute
   '/_dashboard/admins/$adminId/': typeof DashboardAdminsAdminIdIndexRoute
   '/_dashboard/hosts/$hostId/': typeof DashboardHostsHostIdIndexRoute
   '/_dashboard/nodes/$nodeId/': typeof DashboardNodesNodeIdIndexRoute
   '/_dashboard/services/$serviceId/': typeof DashboardServicesServiceIdIndexRoute
+  '/_dashboard/transactions/$adminId/': typeof DashboardTransactionsAdminIdIndexRoute
   '/_dashboard/users/$userId/': typeof DashboardUsersUserIdIndexRoute
 }
 
@@ -847,6 +997,7 @@ export interface FileRouteTypes {
     | '/nodes'
     | '/services'
     | '/settings'
+    | '/transactions'
     | '/users'
     | '/'
     | '/admins/$adminId'
@@ -856,6 +1007,8 @@ export interface FileRouteTypes {
     | '/nodes/create'
     | '/services/$serviceId'
     | '/services/create'
+    | '/transactions/$adminId'
+    | '/transactions/create'
     | '/users/$userId'
     | '/users/create'
     | '/admins/$adminId/delete'
@@ -867,12 +1020,15 @@ export interface FileRouteTypes {
     | '/nodes/$nodeId/edit'
     | '/services/$serviceId/delete'
     | '/services/$serviceId/edit'
+    | '/transactions/$adminId/delete'
+    | '/transactions/$adminId/edit'
     | '/users/$userId/delete'
     | '/users/$userId/edit'
     | '/admins/$adminId/'
     | '/hosts/$hostId/'
     | '/nodes/$nodeId/'
     | '/services/$serviceId/'
+    | '/transactions/$adminId/'
     | '/users/$userId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -883,11 +1039,13 @@ export interface FileRouteTypes {
     | '/nodes'
     | '/services'
     | '/settings'
+    | '/transactions'
     | '/users'
     | '/'
     | '/admins/create'
     | '/nodes/create'
     | '/services/create'
+    | '/transactions/create'
     | '/users/create'
     | '/admins/$adminId/delete'
     | '/admins/$adminId/edit'
@@ -898,12 +1056,15 @@ export interface FileRouteTypes {
     | '/nodes/$nodeId/edit'
     | '/services/$serviceId/delete'
     | '/services/$serviceId/edit'
+    | '/transactions/$adminId/delete'
+    | '/transactions/$adminId/edit'
     | '/users/$userId/delete'
     | '/users/$userId/edit'
     | '/admins/$adminId'
     | '/hosts/$hostId'
     | '/nodes/$nodeId'
     | '/services/$serviceId'
+    | '/transactions/$adminId'
     | '/users/$userId'
   id:
     | '__root__'
@@ -915,6 +1076,7 @@ export interface FileRouteTypes {
     | '/_dashboard/nodes'
     | '/_dashboard/services'
     | '/_dashboard/settings'
+    | '/_dashboard/transactions'
     | '/_dashboard/users'
     | '/_dashboard/'
     | '/_dashboard/admins/$adminId'
@@ -924,6 +1086,8 @@ export interface FileRouteTypes {
     | '/_dashboard/nodes/create'
     | '/_dashboard/services/$serviceId'
     | '/_dashboard/services/create'
+    | '/_dashboard/transactions/$adminId'
+    | '/_dashboard/transactions/create'
     | '/_dashboard/users/$userId'
     | '/_dashboard/users/create'
     | '/_dashboard/admins/$adminId/delete'
@@ -935,12 +1099,15 @@ export interface FileRouteTypes {
     | '/_dashboard/nodes/$nodeId/edit'
     | '/_dashboard/services/$serviceId/delete'
     | '/_dashboard/services/$serviceId/edit'
+    | '/_dashboard/transactions/$adminId/delete'
+    | '/_dashboard/transactions/$adminId/edit'
     | '/_dashboard/users/$userId/delete'
     | '/_dashboard/users/$userId/edit'
     | '/_dashboard/admins/$adminId/'
     | '/_dashboard/hosts/$hostId/'
     | '/_dashboard/nodes/$nodeId/'
     | '/_dashboard/services/$serviceId/'
+    | '/_dashboard/transactions/$adminId/'
     | '/_dashboard/users/$userId/'
   fileRoutesById: FileRoutesById
 }
@@ -983,6 +1150,7 @@ export const routeTree = rootRoute
         "/_dashboard/nodes",
         "/_dashboard/services",
         "/_dashboard/settings",
+        "/_dashboard/transactions",
         "/_dashboard/users",
         "/_dashboard/"
       ]
@@ -1026,6 +1194,14 @@ export const routeTree = rootRoute
     "/_dashboard/settings": {
       "filePath": "_dashboard/settings.lazy.tsx",
       "parent": "/_dashboard"
+    },
+    "/_dashboard/transactions": {
+      "filePath": "_dashboard/transactions.lazy.tsx",
+      "parent": "/_dashboard",
+      "children": [
+        "/_dashboard/transactions/$adminId",
+        "/_dashboard/transactions/create"
+      ]
     },
     "/_dashboard/users": {
       "filePath": "_dashboard/users.lazy.tsx",
@@ -1087,6 +1263,19 @@ export const routeTree = rootRoute
       "filePath": "_dashboard/services/create.tsx",
       "parent": "/_dashboard/services"
     },
+    "/_dashboard/transactions/$adminId": {
+      "filePath": "_dashboard/transactions/$adminId.tsx",
+      "parent": "/_dashboard/transactions",
+      "children": [
+        "/_dashboard/transactions/$adminId/delete",
+        "/_dashboard/transactions/$adminId/edit",
+        "/_dashboard/transactions/$adminId/"
+      ]
+    },
+    "/_dashboard/transactions/create": {
+      "filePath": "_dashboard/transactions/create.tsx",
+      "parent": "/_dashboard/transactions"
+    },
     "/_dashboard/users/$userId": {
       "filePath": "_dashboard/users/$userId.tsx",
       "parent": "/_dashboard/users",
@@ -1136,6 +1325,14 @@ export const routeTree = rootRoute
       "filePath": "_dashboard/services/$serviceId/edit.tsx",
       "parent": "/_dashboard/services/$serviceId"
     },
+    "/_dashboard/transactions/$adminId/delete": {
+      "filePath": "_dashboard/transactions/$adminId/delete.tsx",
+      "parent": "/_dashboard/transactions/$adminId"
+    },
+    "/_dashboard/transactions/$adminId/edit": {
+      "filePath": "_dashboard/transactions/$adminId/edit.tsx",
+      "parent": "/_dashboard/transactions/$adminId"
+    },
     "/_dashboard/users/$userId/delete": {
       "filePath": "_dashboard/users/$userId/delete.tsx",
       "parent": "/_dashboard/users/$userId"
@@ -1159,6 +1356,10 @@ export const routeTree = rootRoute
     "/_dashboard/services/$serviceId/": {
       "filePath": "_dashboard/services/$serviceId/index.tsx",
       "parent": "/_dashboard/services/$serviceId"
+    },
+    "/_dashboard/transactions/$adminId/": {
+      "filePath": "_dashboard/transactions/$adminId/index.tsx",
+      "parent": "/_dashboard/transactions/$adminId"
     },
     "/_dashboard/users/$userId/": {
       "filePath": "_dashboard/users/$userId/index.tsx",

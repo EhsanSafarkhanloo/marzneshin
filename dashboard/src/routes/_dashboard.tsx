@@ -52,10 +52,12 @@ export const DashboardLayout = () => {
                         )}
                     </>
                 }
-                center={<CommandBox />}
+                center={<>
+                {/* <CommandBox /> */}
+                </>}
                 end={
                     <>
-                        <GithubRepo {...stats} variant={isDesktop ? "full" : "mini"} />
+                        {/* <GithubRepo {...stats} variant={isDesktop ? "full" : "mini"} /> */}
                         <HeaderMenu />
                     </>
                 }

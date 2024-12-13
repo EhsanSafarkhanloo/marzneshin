@@ -196,6 +196,7 @@
       "traffic": "Traffic",
       "used_traffic": "Used Traffic",
       "data_limit_reset_strategy": "Data Reset Period",
+      "user_preset_select": "Select account type",
       "online_at": "Last Use",
       "expire_date": "Expire Date",
       "unlimited": "Unlimited",

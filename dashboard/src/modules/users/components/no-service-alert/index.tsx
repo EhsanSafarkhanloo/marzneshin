@@ -14,7 +14,7 @@ export const UsersNoServiceAlert = () => {
             desc={
                 <>
                     {t('page.users.services-alert.desc')}
-                    <Link className="m-1 font-semibold text-secondary-foreground" to="/services">{t('page.nodes.certificate-alert.click')}</Link>
+                    {/* <Link className="m-1 font-semibold text-secondary-foreground" to="/services">{t('page.nodes.certificate-alert.click')}</Link> */}
                 </>
             }
         />

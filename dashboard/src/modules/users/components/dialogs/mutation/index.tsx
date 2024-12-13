@@ -1,4 +1,4 @@
-import { type FC, useMemo } from "react";
+import { type FC, useEffect, useMemo } from "react";
 import {
     Separator,
     DialogTitle,
@@ -23,21 +23,24 @@ import { ServicesField } from "@marzneshin/modules/services";
 import { NoteField } from "./fields";
 import { type MutationDialogProps, useMutationDialog } from "@marzneshin/common/hooks";
 import { DataLimitFields, ExpirationMethodFields } from "./sections";
+import { useAuth } from "@marzneshin/modules/auth";
+import { UserPreset } from "./fields/user-preset";
 
 export const UsersMutationDialog: FC<MutationDialogProps<UserMutationType>> = ({
     entity,
     onClose,
 }) => {
+    const { isSudo } = useAuth();
     const { t } = useTranslation();
     const defaultValue = useMemo(
         () => ({
             service_ids: [],
             username: "",
             data_limit_reset_strategy: "no_reset",
-            data_limit: undefined,
+            data_limit: true,
             note: "",
             expire_date: "",
-            expire_strategy: "fixed_date",
+            expire_strategy: "start_on_first_use",
         }),
         [],
     );
@@ -54,11 +57,14 @@ export const UsersMutationDialog: FC<MutationDialogProps<UserMutationType>> = ({
             data_limit: (d.data_limit ? d.data_limit : 0) / DATA_LIMIT_METRIC,
         }),
     });
-
+    useEffect(()=>{
+        console.log('hameddd', form);
+        console.log('hameddd', entity);
+    },[form.formState, entity])
     return (
         <Dialog open={open} onOpenChange={onOpenChange} defaultOpen={true}>
             <DialogContent className="min-w-full h-full md:h-auto md:min-w-[42rem]">
-                <ScrollArea className="flex flex-col justify-between h-full ">
+                <ScrollArea className="flex flex-col justify-between h-full">
                     <DialogHeader className="mb-3">
                         <DialogTitle className="text-primary">
                             {entity
@@ -68,15 +74,24 @@ export const UsersMutationDialog: FC<MutationDialogProps<UserMutationType>> = ({
                     </DialogHeader>
                     <Form {...form}>
                         <form onSubmit={handleSubmit}>
-                            <div className="flex-col grid-cols-2 gap-2 sm:flex md:grid h-full">
+                            <div className="flex-col grid-cols-2 gap-2 sm:flex md:grid h-full p-1">
                                 <div className="space-y-3">
                                     <UsernameField disabled={!!entity?.username} />
-                                    <Separator />
-                                    <DataLimitFields />
-                                    <Separator />
-                                    <ExpirationMethodFields entity={entity} />
-                                    <Separator />
-                                    <NoteField />
+                                    {isSudo() ? (
+                                        <>
+                                            <Separator />
+                                            <DataLimitFields />
+                                            <Separator />
+                                            <ExpirationMethodFields entity={entity} />
+                                            <Separator />
+                                            <NoteField />
+                                            <UserPreset />
+                                        </>
+
+                                    ) :
+                                        <>
+                                            <UserPreset></UserPreset>
+                                        </>}
                                 </div>
                                 <VStack>
                                     <ServicesField />

@@ -7,7 +7,7 @@ import type { FC } from "react";
 import { sidebarItems as sidebarItemsSudoAdmin, sidebarItemsNonSudoAdmin } from ".";
 import { projectInfo, cn } from "@marzneshin/common/utils";
 import { useAuth } from "@marzneshin/modules/auth";
-import { SupportUs } from "@marzneshin/features/support-us";
+import { Button, Card, CardTitle, CardContent } from "@marzneshin/common/components";
 
 interface DashboardSidebarProps {
     collapsed: boolean;
@@ -22,7 +22,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({
     setOpen,
     open,
 }) => {
-    const { isSudo } = useAuth();
+    const { isSudo, balance } = useAuth();
     const { isCurrentRouteActive } = useIsCurrentRoute()
     const sidebarItems = isSudo() ? sidebarItemsSudoAdmin : sidebarItemsNonSudoAdmin
     return (
@@ -55,10 +55,21 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({
                         </Sidebar.Body>
                         <Sidebar.Footer>
                             {collapsed ?
-                                <SupportUs variant="view" donationLink={projectInfo.donationLink} structure="popover" />
+                                <>
+                                    {/* <SupportUs variant="view" donationLink={projectInfo.donationLink} structure="popover" /> */}
+                                </>
                                 :
-                                <SupportUs variant="local-storage" donationLink={projectInfo.donationLink} structure="card" />
+                                <>
+                                    {/* <SupportUs variant="local-storage" donationLink={projectInfo.donationLink} structure="card" /> */}
+                                    <Card>
+                                    <CardContent className={cn("p-4 flex flex-col w-fit gap-2 text-muted-foreground text-sm")}>
+                                            Your Balance is <strong>{balance().toString()} GB</strong>
+                                        </CardContent>
+                                    </Card>
+                                </>
+
                             }
+
                         </Sidebar.Footer>
                     </div>
                 </Sidebar>

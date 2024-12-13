@@ -25,50 +25,58 @@ export const HeaderMenu: FC = () => {
     const { t } = useTranslation();
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    variant="secondary"
-                    className="bg-gray-800 text-secondary dark:hover:bg-secondary-foreground dark:hover:text-secondary dark:text-secondary-foreground"
-                    size="icon"
-                >
-                    <MenuIcon />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-                <DropdownMenuLabel>Menu</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {(!isDesktop && isSudo()) && (
-                    <>
+        <>
+            {isSudo() ?
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="secondary"
+                            className="bg-gray-800 text-secondary dark:hover:bg-secondary-foreground dark:hover:text-secondary dark:text-secondary-foreground"
+                            size="icon"
+                        >
+                            <MenuIcon />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Menu</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {(!isDesktop && isSudo()) && (
+                            <>
+                                <DropdownMenuItem className="w-full">
+                                    <Link to="/settings" className="hstack gap-1 items-center justify-between w-full h-fit p-0">
+                                        {t("settings")}
+                                        <Settings className="size-4" />
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="w-full">
+                                    <Link to="/admins" className="hstack gap-1 items-center justify-between w-full h-fit p-0" >
+                                        {t("admins")}
+                                        <ShieldCheck className="size-4" />
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                            </>
+                        )}
                         <DropdownMenuItem className="w-full">
-                            <Link to="/settings" className="hstack gap-1 items-center justify-between w-full h-fit p-0">
-                                {t("settings")}
-                                <Settings className="size-4" />
-                            </Link>
+                            <Logout />
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="w-full">
-                            <Link to="/admins" className="hstack gap-1 items-center justify-between w-full h-fit p-0" >
-                                {t("admins")}
-                                <ShieldCheck className="size-4" />
-                            </Link>
-                        </DropdownMenuItem>
+                        <DropdownMenuGroup>
+                            <LanguageSwitchMenu />
+                            <ThemeToggle />
+                        </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                    </>
-                )}
-                <DropdownMenuItem className="w-full">
+                        <DropdownMenuGroup className="py-1 shrink-0">
+                            <VersionIndicator />
+                        </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                </DropdownMenu >
+                :
+                <>
                     <Logout />
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <LanguageSwitchMenu />
-                    <ThemeToggle />
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup className="py-1 shrink-0">
-                    <VersionIndicator />
-                </DropdownMenuGroup>
-            </DropdownMenuContent>
-        </DropdownMenu >
+                </>
+            }
+        </>
     )
 };

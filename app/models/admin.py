@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from pydantic import ConfigDict, BaseModel
@@ -24,6 +25,7 @@ class Admin(BaseModel):
     service_ids: list = []
     subscription_url_prefix: str = ""
     model_config = ConfigDict(from_attributes=True)
+    balance: int = 0
 
 
 class AdminCreate(Admin):

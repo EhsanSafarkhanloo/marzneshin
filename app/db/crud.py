@@ -658,8 +658,11 @@ def get_tls_certificate(db: Session):
 
 
 def get_admin(db: Session, username: str) -> Admin | None:
-    return db.query(Admin).filter(Admin.username == username).first()
-
+    admin_model = db.query(Admin).filter(Admin.username == username).first()
+    for tr in admin_model.transactions_owner:
+        print('ehsan')
+        print(tr.note)
+    return admin_model
 
 def create_admin(db: Session, admin: AdminCreate):
     dbadmin = Admin(
