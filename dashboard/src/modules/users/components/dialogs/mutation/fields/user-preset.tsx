@@ -19,7 +19,8 @@ interface UserPresetFieldProps { }
 export const UserPreset: FC<UserPresetFieldProps> = () => {
     const { t } = useTranslation()
     const form = useFormContext()
-    const handleSelect = (val: number) => {
+    const handleSelect = (value: string) => {
+        let val = parseInt(value);
         switch (val) {
             case 10:
                 form.setValue('data_limit', 30);
@@ -44,7 +45,7 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
             render={() => (
                 <FormItem className="w-full">
                     <FormLabel>{t('page.users.user_preset_select')}</FormLabel>
-                    <Select onValueChange={(e) => handleSelect(e)} defaultValue={"20"}>
+                    <Select onValueChange={(value: string) => handleSelect(value)} defaultValue={"20"}>
                         <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder="Pick a mode" />
