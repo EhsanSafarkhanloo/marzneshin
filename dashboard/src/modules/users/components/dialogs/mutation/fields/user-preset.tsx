@@ -22,17 +22,23 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
     const handleSelect = (value: string) => {
         let val = parseInt(value);
         switch (val) {
+            case 5:
+                form.setValue('data_limit', 0.25);
+                form.setValue('usage_duration', 86400);
+                break;
             case 10:
                 form.setValue('data_limit', 30);
+                form.setValue('usage_duration', 2592000);
                 break;
             case 20:
                 form.setValue('data_limit', 60);
+                form.setValue('usage_duration', 2592000);
                 break;
             case 30:
                 form.setValue('data_limit', 90);
+                form.setValue('usage_duration', 2592000);
                 break;
         }
-        form.setValue('usage_duration', 2592000);
         form.setValue('activation_deadline', undefined);
         form.setValue('data_limit_reset_strategy', 'no_reset');
         form.setValue('expire_date', null);
@@ -55,9 +61,10 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="10">1 Month, 30 GB</SelectItem>
-                            <SelectItem value="20">1 Month, 60 GB</SelectItem>
-                            <SelectItem value="30">1 Month, 90 GB</SelectItem>
+                            <SelectItem value="10">1 Day, 250 MB (Only for test)</SelectItem>
+                            <SelectItem value="10">30 Days, 30 GB</SelectItem>
+                            <SelectItem value="20">30 Days, 60 GB</SelectItem>
+                            <SelectItem value="30">30 Days, 90 GB</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage />

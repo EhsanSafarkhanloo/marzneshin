@@ -536,8 +536,8 @@ def create_user(
 
         is_standard_duration = user.usage_duration == (30 * 86400)
         is_short_duration_with_limit = (
-            user.usage_duration == (2 * 86400) 
-            and user.data_limit == 0.5 * (1024 ** 3)
+            user.usage_duration == (1 * 86400) 
+            and user.data_limit < 0.3 * (1024 ** 3)
         )
         if (
             is_no_reset_strategy
