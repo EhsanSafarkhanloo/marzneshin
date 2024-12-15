@@ -20,7 +20,7 @@ jobs:
 
       - name: Kill all current dockers
         run: |
-          ssh -p ${{ vars.SSH_PORT }} root@${{ vars.SERVER_IP }} 'sudo bash ~/kill.sh'
+          ssh -p ${{ vars.SSH_PORT }} root@${{ vars.SERVER_IP }} 'sudo bash /root/kill.sh'
 
       - name: Delete Existing PM2 Process
         run: |
