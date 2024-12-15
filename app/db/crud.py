@@ -531,7 +531,7 @@ def create_user(
         return dbuser
     else:
         is_no_reset_strategy = user.data_limit_reset_strategy == UserDataUsageResetStrategy.no_reset
-        is_valid_data_limit = 0 < user.data_limit < (90 * (1024 ** 3))
+        is_valid_data_limit = 0 < user.data_limit <= (90 * (1024 ** 3))
         has_sufficient_balance = admin.balance * (1024 ** 3) >= user.data_limit
 
         is_standard_duration = user.usage_duration == (30 * 86400)

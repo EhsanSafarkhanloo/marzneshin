@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Server
+
+    steps:
+      # Setup SSH with private key
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # Kill all current Docker containers
+      - name: Kill all current Docker containers
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} root@${{ secrets.SERVER_IP }} 'bash ~/kill.sh'
+
+      # Delete existing PM2 process and build the project
+      - name: Build and deploy application
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} root@${{ secrets.SERVER_IP }} <<EOF
+            cd /var/lib/marzneshin
+            git pull
+            make dashboard-deps
+            make dashboard-build
+          EOF
+
+      # Run Docker Compose with custom YAML file
+      - name: Run Docker Compose
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} root@${{ secrets.SERVER_IP }} 'cd /var/lib/marzneshin && docker-compose -f ./docker-compose.dev.custom.yml up -d'
