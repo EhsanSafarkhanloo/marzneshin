@@ -39,7 +39,7 @@ export const UsersMutationDialog: FC<MutationDialogProps<UserMutationType>> = ({
             data_limit_reset_strategy: "no_reset",
             data_limit: true,
             note: "",
-            expire_date: "",
+            expire_date: null,
             expire_strategy: "start_on_first_use",
         }),
         [],
@@ -57,10 +57,6 @@ export const UsersMutationDialog: FC<MutationDialogProps<UserMutationType>> = ({
             data_limit: (d.data_limit ? d.data_limit : 0) / DATA_LIMIT_METRIC,
         }),
     });
-    useEffect(()=>{
-        console.log('hameddd', form);
-        console.log('hameddd', entity);
-    },[form.formState, entity])
     return (
         <Dialog open={open} onOpenChange={onOpenChange} defaultOpen={true}>
             <DialogContent className="min-w-full h-full md:h-auto md:min-w-[42rem]">

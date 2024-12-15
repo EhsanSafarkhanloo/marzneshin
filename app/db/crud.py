@@ -13,6 +13,7 @@ from app.db.models import (
     JWT,
     TLS,
     Admin,
+    AdminTransaction,
     Node,
     NodeUserUsage,
     InboundHost,
@@ -23,6 +24,7 @@ from app.db.models import (
     Backend,
 )
 from app.models.admin import AdminCreate, AdminPartialModify
+from app.models.admin_transaction import AdminTransactionType
 from app.models.node import (
     NodeCreate,
     NodeModify,
@@ -501,32 +503,91 @@ def create_user(
     admin: Admin = None,
     allowed_services: list | None = None,
 ):
-    service_ids = (
-        [sid for sid in user.service_ids if sid in allowed_services]
-        if allowed_services is not None
-        else user.service_ids
+    if admin.is_sudo:
+        service_ids = (
+            [sid for sid in user.service_ids if sid in allowed_services]
+            if allowed_services is not None
+            else user.service_ids
+        )
+        dbuser = User(
+            username=user.username,
+            key=user.key,
+            expire_strategy=user.expire_strategy,
+            expire_date=user.expire_date,
+            usage_duration=user.usage_duration,
+            activation_deadline=user.activation_deadline,
+            services=db.query(Service)
+            .filter(Service.id.in_(service_ids))
+            .all(),  # user.services,
+            data_limit=(user.data_limit or None),
+            admin=admin,
+            data_limit_reset_strategy=user.data_limit_reset_strategy,
+            note=user.note,
+        )
+        db.add(dbuser)
+        db.commit()
+        db.refresh(dbuser)
+        transaction = create_transaction(db, user, admin)            
+        return dbuser
+    else:
+        is_no_reset_strategy = user.data_limit_reset_strategy == UserDataUsageResetStrategy.no_reset
+        is_valid_data_limit = 0 < user.data_limit < (90 * (1024 ** 3))
+        has_sufficient_balance = admin.balance * (1024 ** 3) >= user.data_limit
+
+        is_standard_duration = user.usage_duration == (30 * 86400)
+        is_short_duration_with_limit = (
+            user.usage_duration == (2 * 86400) 
+            and user.data_limit == 0.5 * (1024 ** 3)
+        )
+        if (
+            is_no_reset_strategy
+            and is_valid_data_limit
+            and has_sufficient_balance
+            and (is_standard_duration or is_short_duration_with_limit)
+        ):
+
+            service_ids = (
+                [sid for sid in user.service_ids if sid in allowed_services]
+                if allowed_services is not None
+                else user.service_ids
+            )
+            dbuser = User(
+                username=user.username,
+                key=user.key,
+                expire_strategy=user.expire_strategy,
+                expire_date=user.expire_date,
+                usage_duration=user.usage_duration,
+                activation_deadline=user.activation_deadline,
+                services=db.query(Service)
+                .filter(Service.id.in_(service_ids))
+                .all(),  # user.services,
+                data_limit=(user.data_limit or None),
+                admin=admin,
+                data_limit_reset_strategy=user.data_limit_reset_strategy,
+                note=user.note,
+            )
+            db.add(dbuser)
+            db.commit()
+            db.refresh(dbuser)
+            transaction = create_transaction(db, user, admin)            
+            return dbuser
+        else: return None
+
+def create_transaction(db: Session, user: UserCreate, admin: Admin = None):
+    db_admin_transaction = AdminTransaction(
+    admin_id=admin.id,
+    creator_admin_id=admin.id,
+    type=AdminTransactionType.WITHDRAWAL,
+    amount_gigabytes=user.data_limit / (1024 ** 3),
+    amount_rials=0,
+    date_created=datetime.utcnow(),
+    note=f"Transaction for creating user with username: {user.username}, userId: {user.id},  dataLimit: {user.data_limit / (1024 ** 3)}",
     )
-    dbuser = User(
-        username=user.username,
-        key=user.key,
-        expire_strategy=user.expire_strategy,
-        expire_date=user.expire_date,
-        usage_duration=user.usage_duration,
-        activation_deadline=user.activation_deadline,
-        services=db.query(Service)
-        .filter(Service.id.in_(service_ids))
-        .all(),  # user.services,
-        data_limit=(user.data_limit or None),
-        admin=admin,
-        data_limit_reset_strategy=user.data_limit_reset_strategy,
-        note=user.note,
-    )
-    db.add(dbuser)
+    db.add(db_admin_transaction)
     db.commit()
-    db.refresh(dbuser)
-    return dbuser
-
-
+    db.refresh(db_admin_transaction)
+    return db_admin_transaction
+    
 def remove_user(db: Session, dbuser: User):
     dbuser.username = None
     dbuser.removed = True

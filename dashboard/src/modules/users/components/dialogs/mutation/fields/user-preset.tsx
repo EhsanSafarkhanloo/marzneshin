@@ -10,7 +10,7 @@ import {
     SelectItem,
     SelectValue,
 } from '@marzneshin/common/components';
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -35,9 +35,12 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
         form.setValue('usage_duration', 2592000);
         form.setValue('activation_deadline', undefined);
         form.setValue('data_limit_reset_strategy', 'no_reset');
-        form.setValue('expire_date', '');
+        form.setValue('expire_date', null);
         form.setValue('expire_strategy', 'start_on_first_use');
     }
+    useEffect(()=>{
+        handleSelect("20");
+    },[])
     return (
         <FormField
             control={form.control}
