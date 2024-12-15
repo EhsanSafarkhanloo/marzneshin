@@ -61,7 +61,7 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="10">1 Day, 250 MB (Only for test)</SelectItem>
+                            <SelectItem value="5">1 Day, 250 MB (Only for test)</SelectItem>
                             <SelectItem value="10">30 Days, 30 GB</SelectItem>
                             <SelectItem value="20">30 Days, 60 GB</SelectItem>
                             <SelectItem value="30">30 Days, 90 GB</SelectItem>
