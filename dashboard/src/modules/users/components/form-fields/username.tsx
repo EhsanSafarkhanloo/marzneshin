@@ -29,7 +29,9 @@ export const UsernameField: FC<InputHTMLAttributes<HTMLElement>> = ({
         return result;
     }
     useEffect(()=>{
-        makeUserName();
+        if(!disabled && form.getValues('username').trim().length == 0){
+            makeUserName();
+        }
     },[])
     return (
         <FormField
