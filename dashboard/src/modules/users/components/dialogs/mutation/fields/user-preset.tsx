@@ -45,7 +45,7 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
         form.setValue('expire_strategy', 'start_on_first_use');
     }
     useEffect(()=>{
-        handleSelect("20");
+        handleSelect("5");
     },[])
     return (
         <FormField
@@ -54,14 +54,14 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
             render={() => (
                 <FormItem className="w-full">
                     <FormLabel>{t('page.users.user_preset_select')}</FormLabel>
-                    <Select onValueChange={(value: string) => handleSelect(value)} defaultValue={"20"}>
+                    <Select onValueChange={(value: string) => handleSelect(value)} defaultValue={"5"}>
                         <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder="Pick a mode" />
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="5">1 Day, 250 MB (Only for test)</SelectItem>
+                            <SelectItem value="5">1 Day, 256 MB (Only for test)</SelectItem>
                             <SelectItem value="10">30 Days, 30 GB</SelectItem>
                             <SelectItem value="20">30 Days, 60 GB</SelectItem>
                             <SelectItem value="30">30 Days, 90 GB</SelectItem>
