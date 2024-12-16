@@ -577,7 +577,7 @@ def create_transaction(db: Session, user: User, admin: Admin, type: AdminTransac
     db_admin_transaction = AdminTransaction(
     admin_id=admin.id,
     creator_admin_id=admin.id,
-    type=AdminTransactionType.WITHDRAWAL,
+    type=type,
     amount_gigabytes=user.data_limit / (1024 ** 3),
     amount_rials=0,
     date_created=datetime.utcnow(),
