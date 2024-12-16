@@ -156,8 +156,8 @@ class AdminTransaction(Base):
         Enum(AdminTransactionType),
         nullable=False
     )
-    amount_gigabytes = Column(Integer, nullable=False)
-    amount_rials = Column(Integer, nullable=False)
+    amount_gigabytes = Column(Float, nullable=False)
+    amount_rials = Column(Float, nullable=False)
     date_created = Column(DateTime, default=datetime.utcnow)
     note = Column(
         String(256),
