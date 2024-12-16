@@ -25,7 +25,7 @@ class Admin(BaseModel):
     service_ids: list = []
     subscription_url_prefix: str = ""
     model_config = ConfigDict(from_attributes=True)
-    balance: int = 0
+    balance: float = 0
 
 
 class AdminCreate(Admin):
