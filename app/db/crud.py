@@ -47,7 +47,7 @@ from app.models.user import (
 def add_default_hosts(db: Session, inbounds: List[Inbound]):
     hosts = [
         InboundHost(
-            remark="🚀 Marz ({USERNAME}) [{PROTOCOL} - {TRANSPORT}]",
+            remark="AsiaCloud - ({USERNAME}) [{PROTOCOL} - {TRANSPORT}]",
             address="{SERVER_IP}",
             inbound=i,
         )
