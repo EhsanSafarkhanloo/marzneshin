@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import network from '@marzneshin/assets/undraw_connected_world_wuay.svg'
+import sublinksbg from '@marzneshin/assets/sub-links-bg.jpg'
 
 const AuthLayout = () => {
   return (
@@ -9,6 +10,7 @@ const AuthLayout = () => {
       </div>
       <div className='hidden justify-center items-center w-full h-full md:flex bg-primary dark:bg-accent'>
         <img src={network} className="w-1/2 h-1/2" />
+        <img src={sublinksbg} className="hidden	" />
       </div>
     </div>
   )
