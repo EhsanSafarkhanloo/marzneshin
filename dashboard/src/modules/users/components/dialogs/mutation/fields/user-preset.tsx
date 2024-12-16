@@ -10,6 +10,7 @@ import {
     SelectItem,
     SelectValue,
 } from '@marzneshin/common/components';
+import { useAuth } from '@marzneshin/modules/auth';
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -44,9 +45,16 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
         form.setValue('expire_date', null);
         form.setValue('expire_strategy', 'start_on_first_use');
     }
-    useEffect(()=>{
+    const { isSudo, balance } = useAuth();
+    const selectItems = [
+        { value: "5", label: "1 Day, 256 MB (Only for test)", disabled: (isSudo() ? false : balance < 0.25) },
+        { value: "10", label: "30 Days, 30 GB", disabled: (isSudo() ? false : balance < 30) },
+        { value: "20", label: "30 Days, 60 GB", disabled: (isSudo() ? false : balance < 60) },
+        { value: "30", label: "30 Days, 90 GB", disabled: (isSudo() ? false : balance < 90) }
+    ];
+    useEffect(() => {
         handleSelect("5");
-    },[])
+    }, [])
     return (
         <FormField
             control={form.control}
@@ -61,10 +69,11 @@ export const UserPreset: FC<UserPresetFieldProps> = () => {
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="5">1 Day, 256 MB (Only for test)</SelectItem>
-                            <SelectItem value="10">30 Days, 30 GB</SelectItem>
-                            <SelectItem value="20">30 Days, 60 GB</SelectItem>
-                            <SelectItem value="30">30 Days, 90 GB</SelectItem>
+                            {selectItems.map((item) => (
+                                <SelectItem key={item.value} value={item.value} disabled={item.disabled}>
+                                    {item.label}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                     <FormMessage />

@@ -14,6 +14,7 @@ import {
 } from "@marzneshin/common/components"
 import { MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { useAuth } from "@marzneshin/modules/auth"
 
 interface DataTableActionsCellProps<TData>
     extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,6 +28,7 @@ export function DataTableActionsCell<TData>({
     row, onDelete, onEdit, onOpen
 }: DataTableActionsCellProps<TData>) {
     const { t } = useTranslation();
+    const { isSudo } = useAuth();
 
     return (
         <DropdownMenu>
@@ -42,12 +44,16 @@ export function DataTableActionsCell<TData>({
                     <OpenInNewWindowIcon className="mr-1 w-4 h-4" /> {t('open')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem data-testid="action-row-edit" onClick={(e) => { e.stopPropagation(); onEdit(row.original) }}>
+                {isSudo() ? <>
+                    <DropdownMenuItem data-testid="action-row-edit" onClick={(e) => { e.stopPropagation(); onEdit(row.original) }}>
                     <PencilIcon className="mr-1 w-4 h-4" />    {t('edit')}
                 </DropdownMenuItem>
-                <DropdownMenuItem data-testid="action-row-delete" onClick={(e) => { e.stopPropagation(); onDelete(row.original) }} className="text-destructive">
-                    <TrashIcon className="mr-1 w-4 h-4" />{t('delete')}
-                </DropdownMenuItem>
+                </> : null}
+                {isSudo() || true ? <>
+                    <DropdownMenuItem data-testid="action-row-delete" onClick={(e) => { e.stopPropagation(); onDelete(row.original) }} className="text-destructive">
+                        <TrashIcon className="mr-1 w-4 h-4" />{t('delete')}
+                    </DropdownMenuItem>
+                </> : null}
             </DropdownMenuContent>
         </DropdownMenu>
     )

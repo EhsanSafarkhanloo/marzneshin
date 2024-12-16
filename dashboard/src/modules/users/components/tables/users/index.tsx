@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import { fetchUsers, UserType, UsersQueryFetchKey } from "@marzneshin/modules/users";
 import { columns as columnsFn } from "./columns";
 import { EntityTable } from "@marzneshin/libs/entity-table";

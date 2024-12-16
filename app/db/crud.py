@@ -569,11 +569,11 @@ def create_user(
             db.add(dbuser)
             db.commit()
             db.refresh(dbuser)
-            transaction = create_transaction(db, user, admin)            
+            transaction = create_transaction(db, dbuser, admin)            
             return dbuser
         else: return None
 
-def create_transaction(db: Session, user: UserCreate, admin: Admin = None):
+def create_transaction(db: Session, user: User, admin: Admin, type: AdminTransactionType = AdminTransactionType.WITHDRAWAL):
     db_admin_transaction = AdminTransaction(
     admin_id=admin.id,
     creator_admin_id=admin.id,
@@ -581,18 +581,19 @@ def create_transaction(db: Session, user: UserCreate, admin: Admin = None):
     amount_gigabytes=user.data_limit / (1024 ** 3),
     amount_rials=0,
     date_created=datetime.utcnow(),
-    note=f"Transaction for creating user with username: {user.username}, userId: {user.id},  dataLimit: {user.data_limit / (1024 ** 3)}",
-    )
+    note = f"Transaction for {'creating' if type == AdminTransactionType.WITHDRAWAL else 'deleting'} user with username: {user.username}, userId: {user.id}, dataLimit: {user.data_limit / (1024 ** 3)}")
     db.add(db_admin_transaction)
     db.commit()
     db.refresh(db_admin_transaction)
     return db_admin_transaction
     
 def remove_user(db: Session, dbuser: User):
-    dbuser.username = None
+    admin = get_admin_by_id(dbuser.admin_id)
+    dbuser.username = '_removed_' + dbuser.username
     dbuser.removed = True
     dbuser.activated = False
     # db.query(User).filter_by(id=user_id).delete()
+    create_transaction(db, dbuser, admin, AdminTransactionType.DEPOSIT)
     db.commit()
 
 
@@ -720,7 +721,9 @@ def get_tls_certificate(db: Session):
 
 def get_admin(db: Session, username: str) -> Admin | None:
      return db.query(Admin).filter(Admin.username == username).first()
-    
+
+def get_admin_by_id(db: Session, id: int) -> Admin | None:
+     return db.query(Admin).filter(Admin.id == id).first()
 
 def create_admin(db: Session, admin: AdminCreate):
     dbadmin = Admin(

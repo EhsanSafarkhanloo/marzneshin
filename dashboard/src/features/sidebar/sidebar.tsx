@@ -3,7 +3,7 @@ import {
     type SidebarItem,
 } from "@marzneshin/common/components";
 import { useIsCurrentRoute } from "@marzneshin/common/hooks";
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import { sidebarItems as sidebarItemsSudoAdmin, sidebarItemsNonSudoAdmin } from ".";
 import { projectInfo, cn } from "@marzneshin/common/utils";
 import { useAuth } from "@marzneshin/modules/auth";
@@ -25,6 +25,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({
     const { isSudo, balance } = useAuth();
     const { isCurrentRouteActive } = useIsCurrentRoute()
     const sidebarItems = isSudo() ? sidebarItemsSudoAdmin : sidebarItemsNonSudoAdmin
+
     return (
         <aside className="size-full py-4  px-4 ">
             <nav className="size-full">
@@ -63,7 +64,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({
                                     {/* <SupportUs variant="local-storage" donationLink={projectInfo.donationLink} structure="card" /> */}
                                     <Card>
                                     <CardContent className={cn("p-4 flex flex-col w-fit gap-2 text-muted-foreground text-sm")}>
-                                            Your Balance is <strong>{balance().toString()} GB</strong>
+                                            Your Balance is <strong>{balance.toString()} GB</strong>
                                         </CardContent>
                                     </Card>
                                 </>

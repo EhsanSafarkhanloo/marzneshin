@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { fetch, queryClient } from "@marzneshin/common/utils";
 import { toast } from "sonner";
 import i18n from "@marzneshin/features/i18n";
+import { useAuth } from "@marzneshin/modules/auth";
 
 export async function fetchCreateUser(user: UserMutationType): Promise<UserMutationType> {
     return fetch('/users', { method: 'post', body: user }).then((user) => {
@@ -31,10 +32,15 @@ const handleSuccess = (value: UserMutationType) => {
 const UsersCreateFetchKey = "users";
 
 export const useUsersCreationMutation = () => {
+    const { isLoggedIn } = useAuth();
+    
     return useMutation({
         mutationKey: [UsersCreateFetchKey],
         mutationFn: fetchCreateUser,
         onError: handleError,
-        onSuccess: handleSuccess,
+        onSuccess: (value: UserMutationType)=>{
+            handleSuccess(value);
+            isLoggedIn();
+        },
     })
 }

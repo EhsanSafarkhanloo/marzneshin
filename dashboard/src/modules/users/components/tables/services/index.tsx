@@ -1,7 +1,7 @@
 
 import { Button } from "@marzneshin/common/components";
 import { SelectableEntityTable, useRowSelection } from "@marzneshin/libs/entity-table";
-import { columns } from "./columns";
+import { nonSudoColumns } from "./columns";
 import {
     type UserType,
     useUsersUpdateMutation,
@@ -9,12 +9,14 @@ import {
 import { useTranslation } from "react-i18next";
 import { fetchUserServices } from "@marzneshin/modules/services";
 import { useState, useCallback, FC } from "react";
+import { useAuth } from "@marzneshin/modules/auth";
 
 interface UserServicesTableProps {
     user: UserType;
 }
 
 export const UserServicesTable: FC<UserServicesTableProps> = ({ user }) => {
+    const { isSudo } = useAuth();
     const { mutate: updateUser } = useUsersUpdateMutation();
     const { selectedRow, setSelectedRow } =
         useRowSelection(
@@ -26,14 +28,16 @@ export const UserServicesTable: FC<UserServicesTableProps> = ({ user }) => {
     const { t } = useTranslation();
 
     const handleApply = useCallback(() => {
+       if(isSudo()){
         updateUser({ ...user, service_ids: selectedService });
+       }
     }, [selectedService, user, updateUser]);
 
     return (
         <div className="flex flex-col gap-4">
             <SelectableEntityTable
                 fetchEntity={fetchUserServices}
-                columns={columns}
+                columns={nonSudoColumns}
                 primaryFilter="name"
                 existingEntityIds={user.service_ids}
                 entityKey="services"
@@ -43,9 +47,9 @@ export const UserServicesTable: FC<UserServicesTableProps> = ({ user }) => {
                 entitySelection={{ selectedEntity: selectedService, setSelectedEntity: setSelectedService }}
             />
 
-            <Button onClick={handleApply} disabled={selectedService.length === 0}>
+            {isSudo() ? <Button onClick={handleApply} disabled={selectedService.length === 0}>
                 {t("apply")}
-            </Button>
+            </Button> : null}
         </div>
     );
 };

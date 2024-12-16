@@ -46,3 +46,39 @@ export const columns: ColumnDef<ServiceType>[] = [
         cell: ({ row }) => row.original.inbound_ids.length
     }
 ];
+export const nonSudoColumns: ColumnDef<ServiceType>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => {
+                    table.toggleAllPageRowsSelected(!!value)
+                }}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+        accessorKey: "name",
+        header: ({ column }) => <DataTableColumnHeader title={i18n.t('name')} column={column} />,
+    },
+    {
+        accessorKey: 'inbounds',
+        header: ({ column }) => <DataTableColumnHeader title={i18n.t('inbounds')} column={column} />,
+        cell: ({ row }) => row.original.inbound_ids.length
+    }
+];
+

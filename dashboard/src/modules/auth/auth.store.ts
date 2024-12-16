@@ -3,21 +3,22 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 type AdminStateType = {
-    isLoggedIn: () => Promise<boolean>,
+    isLoggedIn: () => Promise<boolean>;
     getAuthToken: () => string | null;
     isSudo: () => boolean;
-    balance: () => number;
+    balance: number;
     setAuthToken: (token: string) => void;
     removeAuthToken: () => void;
     setSudo: (isSudo: boolean) => void;
-    //setBalance: (b: number) => void;
+    setBalance: (b: number) => void;
 }
 
 export const useAuth = create(
-    subscribeWithSelector<AdminStateType>(() => ({
+    subscribeWithSelector<AdminStateType>((set) => ({
         isLoggedIn: async () => {
             try {
                 let res = await fetch('/admins/current');
+                set({ balance: res.balance });
                 localStorage.setItem('balance', String(res.balance));
                 return true;
             } catch (error) {
@@ -28,17 +29,16 @@ export const useAuth = create(
             return localStorage.getItem('token');
         },
         isSudo: () => {
-            const isSudo = localStorage.getItem('is-sudo')
+            const isSudo = localStorage.getItem('is-sudo');
             return isSudo === "true";
         },
         setSudo: (isSudo) => {
             localStorage.setItem('is-sudo', String(isSudo));
         },
-        balance: () => {
-            let userbalance = localStorage.getItem('balance');
-            if (userbalance != null)
-                return parseInt(userbalance);
-            else return 0;
+        balance: 0,
+        setBalance: (b) => {
+            set({ balance: b });
+            localStorage.setItem('balance', String(b));
         },
         setAuthToken: (token: string) => {
             localStorage.setItem('token', token);
@@ -47,4 +47,4 @@ export const useAuth = create(
             localStorage.removeItem('token');
         },
     }))
-)
+);

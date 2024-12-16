@@ -25,25 +25,27 @@ import { useTranslation } from "react-i18next";
 import { formatDistanceToNow } from "date-fns";
 import { format } from '@chbphone55/pretty-bytes';
 import { TimerReset } from "lucide-react";
+import { useAuth } from "@marzneshin/modules/auth";
 
 export const UserInfoTable: FC<UserProp> = ({ user: entity }) => {
     const { t } = useTranslation();
     const expireDate = entity.expire_date ? new Date(entity.expire_date) : null;
     const { mutate: resetUsage } = useUserUsageResetCmd();
     const lifetimeUsedTrafficByte = format(entity.lifetime_used_traffic);
+    const { isSudo } = useAuth();
 
     return (
         <Card>
             <CardHeader className="flex flex-row justify-between items-center w-full">
                 <CardTitle>{t("user_info")}</CardTitle>
                 <div className="hstack justify-center items-center gap-2">
-                    <Button
+                    {isSudo() ? <Button
                         className="rounded-2xl"
                         onClick={() => resetUsage(entity)}
                     >
                         <TimerReset className="mr-2" />
                         <span>{t("page.users.reset_usage")}</span>
-                    </Button>
+                    </Button> : null}
                     <UserStatusEnableButton user={entity} />
                 </div>
             </CardHeader>
@@ -98,15 +100,17 @@ export const UserInfoTable: FC<UserProp> = ({ user: entity }) => {
                                 ),
                             }[entity.expire_strategy]
                         }
-                        <TableRowWithCell
-                            label={t("page.users.used_traffic")}
-                            value={<UserUsedTraffic user={entity} />}
-                        />
-                        <DateTableRow
-                            label={t("page.users.traffic_reset_at")}
-                            date={entity.traffic_reset_at}
-                            withTime
-                        />
+                        {isSudo() ? <>
+                            <TableRowWithCell
+                                label={t("page.users.used_traffic")}
+                                value={<UserUsedTraffic user={entity} />}
+                            />
+                            <DateTableRow
+                                label={t("page.users.traffic_reset_at")}
+                                date={entity.traffic_reset_at}
+                                withTime
+                            />
+                        </> : null}
                         <TableRowWithCell
                             label={t("page.users.lifetime_used_traffic")}
                             value={`${lifetimeUsedTrafficByte[0]} ${lifetimeUsedTrafficByte[1]}`}

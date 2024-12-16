@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 const LoginPage: FC = () => {
   const { t } = useTranslation();
   const { removeAuthToken } = useAuth()
-  removeAuthToken()
+  //removeAuthToken()
   return (
     <div className='flex flex-row justify-center items-center p-4 w-full h-full'>
       <Card className="p-1 w-full md:w-2/3">

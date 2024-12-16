@@ -21,6 +21,7 @@ import {
     QRCodeSection,
     UserInfoTable,
 } from "./user-info";
+import { useAuth } from "@marzneshin/modules/auth";
 
 interface UsersSettingsDialogProps extends SettingsDialogProps {
     entity: UserType | null;
@@ -36,7 +37,8 @@ export const UsersSettingsDialog: FC<UsersSettingsDialogProps> = ({
     isPending,
 }) => {
     const { t } = useTranslation();
-
+    const { isSudo } = useAuth();
+    
     return (
         <SettingsDialog open={open} onClose={onClose} onOpenChange={onOpenChange}>
             <Awaiting
