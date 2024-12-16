@@ -588,7 +588,7 @@ def create_transaction(db: Session, user: User, admin: Admin, type: AdminTransac
     return db_admin_transaction
     
 def remove_user(db: Session, dbuser: User):
-    admin = get_admin_by_id(dbuser.admin_id)
+    admin = get_admin_by_id(db, dbuser.admin_id)
     dbuser.username = '_removed_' + dbuser.username
     dbuser.removed = True
     dbuser.activated = False
