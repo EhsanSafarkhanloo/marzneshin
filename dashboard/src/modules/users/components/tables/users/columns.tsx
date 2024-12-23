@@ -64,6 +64,7 @@ export const columns = (actions: ColumnActions<UserType>): ColumnDefWithSudoRole
     },
     {
         accessorKey: "expire_strategy",
+        sudoVisibleOnly: true,
         header: ({ column }) => (
             <DataTableColumnHeader
                 title={i18n.t("page.users.expire_method")}
