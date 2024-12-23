@@ -11,6 +11,10 @@
     }
   </style>
   <style>
+    .radial-progress{
+      font-weight: 100 !important;
+      font-size: 22px !important;
+    }
     .radial-progress:before {
       background: radial-gradient(farthest-side, currentColor 98%, #0000) top/var(--thickness) var(--thickness)      no-repeat,    conic-gradient(currentColor calc(var(--value) * 1%), #0000 0)#eaeaea24 !important;
     }
@@ -4236,7 +4240,7 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
               class="radial-progress font-black text-2xl" id="progress__bar" style="--size: 9rem; --thickness: 1.2rem">
             </div>
             <span class="inline-block dark:text-white text-black font-semibold text-lg">{{ user.username }}</span>
-            <span class="px-4 py-2 rounded-full inline-block shadow-md shadow-green-900 font-bold text-gray-200" x-data="{ 
+            <span class="px-4 py-2 rounded-md inline-block shadow-md shadow-green-900 font-bold text-gray-200" x-data="{ 
                 is_active: {% if user.is_active %}true{% else %}false{% endif %},
                 expired: {% if user.expired %}true{% else %}false{% endif %},
                 data_limit_reached: {% if user.data_limit_reached %}true{% else %}false{% endif %},
