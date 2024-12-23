@@ -7,14 +7,12 @@
   <title>{{ user.username }} - Sub Info</title>
   <style>
     .asli {
-      background: url("/assets/sub-links-bg.jpg") no-repeat;
-      background-position: center;
-      background-size: cover;
+      background: url("/assets/sub-links-bg.jpg?v=1");
     }
   </style>
   <style>
     .radial-progress:before {
-      background: #eaeaea24 !important;
+      background: radial-gradient(farthest-side, currentColor 98%, #0000) top/var(--thickness) var(--thickness)      no-repeat,    conic-gradient(currentColor calc(var(--value) * 1%), #0000 0)#eaeaea24 !important;
     }
 
     /*
