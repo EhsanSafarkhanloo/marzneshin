@@ -155,7 +155,8 @@ async def reset_users_data_usage(db: DBDep, admin: SudoAdminDep):
     You will need to restart for this to take effect for now
     """
     dbadmin = crud.get_admin(db, admin.username)
-    crud.reset_all_users_data_usage(db=db, admin=dbadmin)
+    if dbadmin.is_sudo:
+        crud.reset_all_users_data_usage(db=db, admin=dbadmin)
     return {}
 
 
@@ -292,22 +293,25 @@ async def remove_user(
     """
     Remove a user
     """
-    marznode.operations.update_user(db_user, remove=True)
+    if admin.is_sudo or db_user.lifetime_used_traffic == 0:
+        marznode.operations.update_user(db_user, remove=True)
 
-    deleted_username = db_user.username
-    crud.remove_user(db, db_user)
+        deleted_username = db_user.username
+        crud.remove_user(db, db_user)
 
-    db_user.username = deleted_username
-    user = UserResponse.model_validate(db_user)
-    db.expunge(db_user)
+        db_user.username = deleted_username
+        user = UserResponse.model_validate(db_user)
+        db.expunge(db_user)
 
-    asyncio.ensure_future(
-        notify(
-            action=UserNotification.Action.user_deleted, user=user, by=admin
+        asyncio.ensure_future(
+            notify(
+                action=UserNotification.Action.user_deleted, user=user, by=admin
+            )
         )
-    )
 
-    logger.info("User %s deleted", db_user.username)
+        logger.info("User %s deleted", db_user.username)
+    else:
+        logger.error("User %s not deleted", db_user.username)
     return {}
 
 
@@ -339,26 +343,29 @@ async def reset_user_data_usage(
     """
     Reset user data usage
     """
-    was_active = db_user.is_active
-    db_user = crud.reset_user_data_usage(db, db_user)
+    if admin.is_sudo:
+        was_active = db_user.is_active
+        db_user = crud.reset_user_data_usage(db, db_user)
 
-    if db_user.is_active and not was_active:
-        marznode.operations.update_user(db_user)
-        db_user.activated = True
-        db.commit()
+        if db_user.is_active and not was_active:
+            marznode.operations.update_user(db_user)
+            db_user.activated = True
+            db.commit()
 
-    user = UserResponse.model_validate(db_user)
+        user = UserResponse.model_validate(db_user)
 
-    asyncio.ensure_future(
-        notify(
-            action=UserNotification.Action.data_usage_reset,
-            user=user,
-            by=admin,
+        asyncio.ensure_future(
+            notify(
+                action=UserNotification.Action.data_usage_reset,
+                user=user,
+                by=admin,
+            )
         )
-    )
 
-    logger.info("User `%s`'s usage was reset", db_user.username)
-
+        logger.info("User `%s`'s usage was reset", db_user.username)
+    else: 
+        logger.info("User `%s`'s usage was NOT reset", db_user.username)
+        
     return user
 
 
